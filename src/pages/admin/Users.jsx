@@ -35,7 +35,6 @@ const Users = () => {
     const getUsers = async () => {
         try {
             const resp = await fetchGetAllUsers();
-            console.log("fetchGetAllUsers resp :>> ", resp);
             setUsers(resp.data?.map((user) => ({ ...user, key: user.id })));
         } catch (error) {
             console.log("error :>> ", error);

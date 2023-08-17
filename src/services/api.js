@@ -11,8 +11,13 @@ export const fetchLogin = async (data) => {
     return resp;
 };
 
-export const fetchGetAllUsers = async () => {
-    const resp = await axios.get(baseBackendUrl + `/users`);
+export const fetchSignup = async (data) => {
+    const resp = await axios.post(baseBackendUrl + `/signup`, data);
+    return resp;
+};
+
+export const fetchGetAllUsers = async (query) => {
+    const resp = await axios.get(baseBackendUrl + `/users`, { params: { query } });
     return resp;
 };
 
