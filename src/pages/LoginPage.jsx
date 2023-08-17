@@ -1,24 +1,34 @@
 import { Button, Form, Input, Tabs } from "antd";
 import Title from "antd/es/typography/Title";
-import { fetchLogin } from "../services/api";
+import { fetchLogin, fetchSignup } from "../services/api";
 import Container from "../components/Container";
 
 const onLoginFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
 };
-const onSignupFinish = (values) => {
-    console.log("Success:", values);
-};
+
 const onSignipFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
 };
 
 const LoginPage = ({ token, setToken, setUser }) => {
     const onLoginFinish = async (data) => {
-        console.log("Success:", data);
         try {
             const resp = await fetchLogin(data);
-            if (resp.status === 200) {
+            if (resp.status <= 201) {
+                setToken(resp.data?.token);
+                setUser(resp.data?.user);
+            }
+            console.log("resp :>> ", resp);
+        } catch (error) {
+            console.log("error :>> ", error);
+        }
+    };
+
+    const onSignupFinish = async (data) => {
+        try {
+            const resp = await fetchSignup(data);
+            if (resp.status <= 201) {
                 setToken(resp.data?.token);
                 setUser(resp.data?.user);
             }
