@@ -61,8 +61,11 @@ const ChatsPage = ({ user, socket }) => {
   };
 
   useEffect(() => {
-    console.log('chats :>> ', chats);
-  }, [chats]);
+    socket.on('private-message', ({ sender, message }) => {
+      console.log('sender :>> ', sender);
+      console.log('message :>> ', message);
+    });
+  }, []);
 
   useEffect(() => {
     if (query) {
