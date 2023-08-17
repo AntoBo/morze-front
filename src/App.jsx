@@ -1,20 +1,40 @@
-import logo from "./logo.svg";
 import "./App.css";
+import { Route, Routes } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import { useEffect, useState } from "react";
+import { setAxiosToken } from "./services/api";
+
+import io from "socket.io-client";
+import ChatsPage from "./pages/ChatsPage";
+import Users from "./pages/admin/Users";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
 
 const App = () => {
     console.log("process.env.REACT_APP_BACKEND_URL :>> ", process.env.REACT_APP_BACKEND_URL);
+    const [token, setToken] = useState(null);
+    const [user, setUser] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(null);
+
+    useEffect(() => {
+        console.log("token :>> ", token);
+        if (token) {
+            setAxiosToken(token);
+            socket.emit("authenticate", user?.id);
+        }
+    }, [token]);
+
     return (
-        <div className="App">
-            <header className="App-header">
-                <img src={logo} className="App-logo" alt="logo" />
-                <p>
-                    Edit <code>src/App.js</code> and save to reload, dude...
-                </p>
-                <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-                    Learn React
-                </a>
-            </header>
-        </div>
+        <>
+            <ToastContainer />
+            <Routes>
+                <Route path="/login" element={<LoginPage token={token} setToken={setToken} setUser={setUser} setIsAdmin={setIsAdmin} />} />
+                <Route path="/chats" element={<ChatsPage user={user} />} />
+                <Route path="/users" element={<Users />} />
+            </Routes>
+        </>
     );
 };
 
