@@ -10,7 +10,7 @@ import Users from './pages/admin/Users';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
+// const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
 
 const App = () => {
   console.log('process.env.REACT_APP_BACKEND_URL :>> ', process.env.REACT_APP_BACKEND_URL);
@@ -21,7 +21,7 @@ const App = () => {
     console.log('token :>> ', token);
     if (token) {
       setAxiosToken(token);
-      socket.emit('authenticate', user);
+      // socket.emit('authenticate', user);
 
       console.log('user :>> ', user);
     }
@@ -36,7 +36,7 @@ const App = () => {
           element={!token ? <LoginPage setToken={setToken} setUser={setUser} /> : <Navigate to={`/users`} />}
         />
         <Route path="/users" element={token && user?.isAdmin ? <Users /> : <Navigate to={`/chats`} />} />
-        <Route path="/chats" element={token ? <ChatsPage user={user} socket={socket} /> : <Navigate to={`/login`} />} />
+        <Route path="/chats" element={token ? <ChatsPage user={user} /> : <Navigate to={`/login`} />} />
         <Route path="/*" element={<Navigate to={`/login`} />} />
       </Routes>
     </>
