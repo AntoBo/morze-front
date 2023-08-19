@@ -2,47 +2,34 @@ import { Button, Card, Modal, Input, Tabs, Select } from 'antd';
 
 import Container from '../components/Container';
 import Title from 'antd/es/typography/Title';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchGetAllUsers } from '../services/api';
+import { nanoid } from 'nanoid';
+import io from 'socket.io-client';
 
 const cardStyle = {
   width: 300,
   marginBottom: 30,
 };
 
-const ChatsPage = ({ user, socket }) => {
-  const tabItems = [
-    {
-      key: '1',
-      label: `Name`,
-      children: (
-        <div>
-          <Card size="small" title="Name" style={cardStyle}>
-            <p>.----.---...----</p>
-          </Card>
-          <Card size="small" extra="Me" style={cardStyle}>
-            <p>.----.---...----...------</p>
-          </Card>
-          <Card size="small" title="Name" style={cardStyle}>
-            <p>----.----...----...----.----...----.----.----...----.----...----.----...----.----...----</p>
-          </Card>
-        </div>
-      ),
-    },
-  ];
+const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
+
+const ChatsPage = ({ user }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState([]);
   const [selected, setSelected] = useState(null);
   const [chats, setChats] = useState([]);
   const [recipientId, setRecepientId] = useState(null);
-  const [message, setMessage] = useState(null);
+  const [outMessage, setOutMessage] = useState(null);
+  const [inMsgObj, setInMsgObj] = useState(null);
 
   const sendMessage = async () => {
-    socket.emit('private-message', { recipientId, message });
+    socket.emit('private-message', { recipientId, message: outMessage });
+
     const chatsNew = chats.map(chat => {
       if (chat.key === recipientId) {
-        chat.children.push({ extra: 'Me', message });
+        chat.children.push({ extra: 'Me', message: outMessage, key: nanoid() });
       }
       return chat;
     });
@@ -61,11 +48,47 @@ const ChatsPage = ({ user, socket }) => {
   };
 
   useEffect(() => {
+    socket.emit('authenticate', user);
     socket.on('private-message', ({ sender, message }) => {
       console.log('sender :>> ', sender);
       console.log('message :>> ', message);
+      setInMsgObj({ sender, message });
     });
   }, []);
+
+  useEffect(() => {
+    console.log('inMsgObj :>> ', inMsgObj);
+    if (inMsgObj) {
+      const { sender, message } = inMsgObj;
+      if (!recipientId) {
+        setRecepientId(sender.id);
+      }
+
+      if (chats.some(chat => chat.key === sender.id)) {
+        console.log('old chat');
+        const chatsWithNewMsg = chats.map(chat => {
+          if (chat.key === sender.id) {
+            chat.children.push({ title: sender.name, message, key: nanoid() });
+          }
+          return chat;
+        });
+        setChats(chatsWithNewMsg);
+      } else {
+        console.log('new chat');
+
+        const newChat = {
+          key: sender.id,
+          label: sender.name,
+          children: [{ title: sender.name, message, key: nanoid() }],
+        };
+        setChats(c => [...c, newChat]);
+      }
+    }
+  }, [inMsgObj]);
+
+  useEffect(() => {
+    console.log('chats in uef :>> ', chats);
+  }, [chats]);
 
   useEffect(() => {
     if (query) {
@@ -120,7 +143,7 @@ const ChatsPage = ({ user, socket }) => {
                   ...chat,
                   children: chat.children.length ? (
                     chat.children.map((child, i) => (
-                      <Card key={i} size="small" title={child.name} extra={child.extra} style={cardStyle}>
+                      <Card key={i} size="small" title={child.title} extra={child.extra} style={cardStyle}>
                         <p>{child.message}</p>
                       </Card>
                     ))
@@ -134,8 +157,8 @@ const ChatsPage = ({ user, socket }) => {
         {chats.length ? (
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 30 }}>
             <Input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
+              value={outMessage}
+              onChange={e => setOutMessage(e.target.value)}
               style={{ width: 215 }}
               placeholder="Type message"
             />
