@@ -10,10 +10,7 @@ import Users from './pages/admin/Users';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
-
 const App = () => {
-  console.log('process.env.REACT_APP_BACKEND_URL :>> ', process.env.REACT_APP_BACKEND_URL);
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -29,11 +26,11 @@ const App = () => {
       <Routes>
         <Route
           path="/login"
-          element={!token ? <LoginPage setToken={setToken} setUser={setUser} /> : <Navigate to={`/users`} />}
+          element={!token ? <LoginPage setToken={setToken} setUser={setUser} /> : <Navigate to={`users`} />}
         />
-        <Route path="/users" element={token && user?.isAdmin ? <Users /> : <Navigate to={`/chats`} />} />
-        <Route path="/chats" element={token ? <ChatsPage user={user} /> : <Navigate to={`/login`} />} />
-        <Route path="/*" element={<Navigate to={`/login`} />} />
+        <Route path="/users" element={token && user?.isAdmin ? <Users /> : <Navigate to={`chats`} />} />
+        <Route path="/chats" element={token ? <ChatsPage user={user} /> : <Navigate to={`login`} />} />
+        <Route path="/*" element={<Navigate to={`login`} />} />
       </Routes>
     </>
   );

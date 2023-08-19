@@ -31,6 +31,10 @@ const ChatsPage = ({ user }) => {
     }
   };
   const sendMessage = async () => {
+    if (!outMessage) {
+      return;
+    }
+
     socket.emit('private-message', { recipientId, message: outMessage });
 
     const chatsNew = chats.map(chat => {
@@ -85,10 +89,6 @@ const ChatsPage = ({ user }) => {
       }
     }
   }, [inMsgObj]);
-
-  useEffect(() => {
-    console.log('chats in uef :>> ', chats);
-  }, [chats]);
 
   useEffect(() => {
     if (query) {
@@ -157,6 +157,7 @@ const ChatsPage = ({ user }) => {
         {chats.length ? (
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 30 }}>
             <Input
+              onPressEnter={sendMessage}
               value={outMessage}
               onChange={handleInput}
               style={{ width: 215 }}
@@ -188,7 +189,7 @@ const ChatsPage = ({ user }) => {
             style={{ width: 200, marginBottom: 30 }}
             placeholder="Search to Select"
             optionFilterProp="children"
-            filterOption={(input, option) => (option?.label ?? '').includes(input)}
+            filterOption={(input, option) => (option?.label.toLowerCase() ?? '').includes(input.toLowerCase())}
             filterSort={(optionA, optionB) =>
               (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
             }
