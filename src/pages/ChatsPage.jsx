@@ -24,6 +24,12 @@ const ChatsPage = ({ user }) => {
   const [outMessage, setOutMessage] = useState(null);
   const [inMsgObj, setInMsgObj] = useState(null);
 
+  const handleInput = e => {
+    const key = e.nativeEvent.data;
+    if (['-', '.', null].includes(key)) {
+      setOutMessage(e.target.value);
+    }
+  };
   const sendMessage = async () => {
     socket.emit('private-message', { recipientId, message: outMessage });
 
@@ -152,9 +158,9 @@ const ChatsPage = ({ user }) => {
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 30 }}>
             <Input
               value={outMessage}
-              onChange={e => setOutMessage(e.target.value)}
+              onChange={handleInput}
               style={{ width: 215 }}
-              placeholder="Type message"
+              placeholder="Type '-' or '.' only"
             />
             <Button onClick={sendMessage} style={{ marginLeft: 20 }} type="default" htmlType="button">
               Send
