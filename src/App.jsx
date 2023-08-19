@@ -18,12 +18,8 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    console.log('token :>> ', token);
     if (token) {
       setAxiosToken(token);
-      // socket.emit('authenticate', user);
-
-      console.log('user :>> ', user);
     }
   }, [token]);
 

@@ -20,7 +20,6 @@ const LoginPage = ({ setToken, setUser }) => {
         setToken(resp.data?.token);
         setUser(resp.data?.user);
       }
-      console.log('resp :>> ', resp);
     } catch (error) {
       if (error.response.status % 400 < 100) {
         toast.error(error.response?.data?.message);
@@ -35,7 +34,6 @@ const LoginPage = ({ setToken, setUser }) => {
         setToken(resp.data?.token);
         setUser(resp.data?.user);
       }
-      console.log('resp :>> ', resp);
     } catch (error) {
       if (error.response.status % 400 < 100) {
         toast.error(error.response?.data?.message);

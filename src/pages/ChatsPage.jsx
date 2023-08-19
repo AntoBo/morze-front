@@ -50,14 +50,11 @@ const ChatsPage = ({ user }) => {
   useEffect(() => {
     socket.emit('authenticate', user);
     socket.on('private-message', ({ sender, message }) => {
-      console.log('sender :>> ', sender);
-      console.log('message :>> ', message);
       setInMsgObj({ sender, message });
     });
   }, []);
 
   useEffect(() => {
-    console.log('inMsgObj :>> ', inMsgObj);
     if (inMsgObj) {
       const { sender, message } = inMsgObj;
       if (!recipientId) {
@@ -65,7 +62,6 @@ const ChatsPage = ({ user }) => {
       }
 
       if (chats.some(chat => chat.key === sender.id)) {
-        console.log('old chat');
         const chatsWithNewMsg = chats.map(chat => {
           if (chat.key === sender.id) {
             chat.children.push({ title: sender.name, message, key: nanoid() });
@@ -74,8 +70,6 @@ const ChatsPage = ({ user }) => {
         });
         setChats(chatsWithNewMsg);
       } else {
-        console.log('new chat');
-
         const newChat = {
           key: sender.id,
           label: sender.name,
