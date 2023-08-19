@@ -26,11 +26,11 @@ const App = () => {
       <Routes>
         <Route
           path="/login"
-          element={!token ? <LoginPage setToken={setToken} setUser={setUser} /> : <Navigate to={`users`} />}
+          element={!token ? <LoginPage setToken={setToken} setUser={setUser} /> : <Navigate to={`/users`} />}
         />
-        <Route path="/users" element={token && user?.isAdmin ? <Users /> : <Navigate to={`chats`} />} />
-        <Route path="/chats" element={token ? <ChatsPage user={user} /> : <Navigate to={`login`} />} />
-        <Route path="/*" element={<Navigate to={`login`} />} />
+        <Route path="/users" element={token && user?.isAdmin ? <Users /> : <Navigate to={`/chats`} />} />
+        <Route path="/chats" element={token ? <ChatsPage user={user} /> : <Navigate to={`/login`} />} />
+        <Route path="/*" element={<Navigate to={`/login`} />} />
       </Routes>
     </>
   );
