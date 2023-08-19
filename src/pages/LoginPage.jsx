@@ -2,6 +2,7 @@ import { Button, Form, Input, Tabs } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { fetchLogin, fetchSignup } from '../services/api';
 import Container from '../components/Container';
+import { toast } from 'react-toastify';
 
 const onLoginFinishFailed = errorInfo => {
   console.log('Failed:', errorInfo);
@@ -21,7 +22,9 @@ const LoginPage = ({ setToken, setUser }) => {
       }
       console.log('resp :>> ', resp);
     } catch (error) {
-      console.log('error :>> ', error);
+      if (error.response.status % 400 < 100) {
+        toast.error(error.response?.data?.message);
+      }
     }
   };
 
@@ -34,7 +37,9 @@ const LoginPage = ({ setToken, setUser }) => {
       }
       console.log('resp :>> ', resp);
     } catch (error) {
-      console.log('error :>> ', error);
+      if (error.response.status % 400 < 100) {
+        toast.error(error.response?.data?.message);
+      }
     }
   };
 
